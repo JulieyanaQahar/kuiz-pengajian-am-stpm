@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PYQ.S3_16_OBJEKTIF - Kuiz Interaktif</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti for Celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            min-height: 100vh;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .option-card {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-card:hover:not(.disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.25);
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        .animate-shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes pop {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop {
+            animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col justify-between p-3 sm:p-6 min-h-screen">
+
+    <!-- Header / Brand Banner -->
+    <header class="w-full max-w-4xl mx-auto mb-4 sm:mb-6">
+        <div class="glass-panel rounded-2xl p-4 sm:p-5 shadow-2xl flex flex-col sm:flex-row justify-between items-center gap-3 border-t-4 border-indigo-500">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-lg text-xl">
+                    <i class="fa-solid fa-[#fa-graduation-cap] fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700 mb-1">
+                        PYQ.S3_16_OBJEKTIF
+                    </span>
+                    <h1 class="text-lg sm:text-xl font-extrabold text-slate-800 tracking-tight">Kuiz Pengajian Malaysia / STPM</h1>
+                </div>
+            </div>
+            <div class="text-center sm:text-right bg-slate-50 px-4 py-2 rounded-xl border border-slate-100 w-full sm:w-auto">
+                <p class="text-xs text-slate-500 font-medium">Disediakan Oleh:</p>
+                <p class="text-sm font-bold text-indigo-900">PN. JULIEYANAQAHAR</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-4xl mx-auto flex-1 flex flex-col justify-center">
+        
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl text-center animate-pop my-auto">
+            <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mb-3">Selamat Datang ke Set Latihan!</h2>
+            <p class="text-slate-600 max-w-lg mx-auto mb-6 text-sm sm:text-base leading-relaxed">
+                Uji kefahaman anda untuk set <span class="font-semibold text-indigo-600">PYQ.S3_16_OBJEKTIF</span>. Soalan disusun secara rawak setiap kali anda mula!
+            </p>
+            
+            <div class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-4 sm:p-5 max-w-md mx-auto mb-8 text-left text-xs sm:text-sm text-slate-700 space-y-2.5">
+                <div class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-check text-indigo-600 mt-0.5"></i>
+                    <span><strong>Mekanik Kuiz:</strong> Anda <em>mesti</em> menjawab soalan dengan betul sebelum dibenarkan ke soalan seterusnya.</span>
+                </div>
+                <div class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-check text-indigo-600 mt-0.5"></i>
+                    <span><strong>Pembelajaran Kendiri:</strong> Tiada jawapan betul ditunjukkan jika salah. Teruskan mencuba!</span>
+                </div>
+                <div class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-check text-indigo-600 mt-0.5"></i>
+                    <span><strong>Penilaian:</strong> Markah akhir dikira berdasarkan percubaan <em>pertama</em> anda sahaja.</span>
+                </div>
+            </div>
+
+            <button onclick="startQuiz()" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold rounded-2xl shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/50 transform active:scale-95 transition-all text-base sm:text-lg flex items-center justify-center gap-3 mx-auto">
+                <span>Mula Menjawab Kuiz</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <!-- Quiz Container (Hidden initially) -->
+        <div id="quiz-screen" class="hidden glass-panel rounded-3xl p-4 sm:p-8 shadow-2xl flex-col my-auto">
+            <!-- Progress Bar & Question Counter -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs sm:text-sm font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100" id="question-tracker">
+                        Soalan 1 / 15
+                    </span>
+                    <span class="text-xs sm:text-sm font-semibold text-slate-500" id="score-tracker">
+                        Markah Percubaan Pertama: 0
+                    </span>
+                </div>
+                <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden p-0.5">
+                    <div id="progress-bar" class="bg-gradient-to-r from-indigo-500 to-violet-600 h-full rounded-full transition-all duration-300 w-0"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-white rounded-2xl p-5 sm:p-7 shadow-sm border border-slate-100 mb-6">
+                <h3 id="question-text" class="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
+                    <!-- Soalan dimasukkan melalui JS -->
+                </h3>
+            </div>
+
+            <!-- Options Grid -->
+            <div id="options-container" class="grid grid-cols-1 gap-3 sm:gap-4 mb-6">
+                <!-- Pilihan soalan dimasukkan melalui JS -->
+            </div>
+
+            <!-- Feedback Alert Message Box -->
+            <div id="feedback-box" class="hidden p-4 rounded-2xl mb-6 text-sm sm:text-base font-semibold flex items-center gap-3 animate-pop">
+                <div id="feedback-icon" class="text-xl"></div>
+                <div id="feedback-text" class="flex-1"></div>
+            </div>
+
+            <!-- Next Button Container -->
+            <div class="flex justify-end pt-2">
+                <button id="next-btn" onclick="nextQuestion()" disabled class="w-full sm:w-auto px-6 py-3.5 bg-slate-300 text-slate-500 font-bold rounded-xl shadow cursor-not-allowed transition-all flex items-center justify-center gap-2">
+                    <span>Soalan Seterusnya</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Screen (Hidden initially) -->
+        <div id="result-screen" class="hidden glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl text-center animate-pop my-auto">
+            <div id="result-badge" class="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl shadow-xl">
+                <!-- Icon via JS -->
+            </div>
+            
+            <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mb-1">Syabas & Terima Kasih!</h2>
+            <p class="text-slate-500 text-sm mb-6">Anda telah berjaya menyelesaikan semua soalan dalam set ini.</p>
+
+            <!-- Score Summary Box -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 max-w-sm mx-auto mb-6">
+                <p class="text-xs uppercase font-extrabold tracking-wider text-slate-400 mb-1">Keputusan Percubaan Pertama</p>
+                <div class="flex items-baseline justify-center gap-1">
+                    <span id="final-score" class="text-5xl font-black text-indigo-600">0</span>
+                    <span id="final-total" class="text-xl font-bold text-slate-400">/ 15</span>
+                </div>
+                <p id="percentage-text" class="text-sm font-semibold text-slate-600 mt-2">Peratusan: 0%</p>
+            </div>
+
+            <!-- Motivational Quote -->
+            <div class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-5 max-w-lg mx-auto mb-8 text-center">
+                <i class="fa-solid fa-quote-left text-indigo-300 text-2xl mb-2 block"></i>
+                <p id="motivation-quote" class="text-sm sm:text-base font-bold text-indigo-950 leading-relaxed italic">
+                    "Kejayaan tidak datang daripada apa yang anda buat secara kebetulan, tetapi apa yang anda lakukan secara konsisten."
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row justify-center gap-3">
+                <button onclick="restartQuiz()" class="px-8 py-3.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 active:scale-95 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Ulang Jawab Set Ini</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-4xl mx-auto mt-6 text-center text-xs text-slate-300">
+        <p>© PYQ.S3_16_OBJEKTIF • Modul Interaktif Pengajian Malaysia / STPM</p>
+    </footer>
+
+    <!-- Quiz Logic JavaScript -->
+    <script>
+        // Bank Soalan asal berserta jawapan betul
+        const originalQuestions = [
+            {
+                id: 1,
+                question: "Yang manakah faktor penentu dasar luar Malaysia?<br><br><span class='font-normal text-slate-600'>I. Misi negara<br>II. Ideologi yang sama<br>III. Sokongan kuasa besar<br>IV. Kedudukan geostrategik</span>",
+                options: [
+                    { letter: "A", text: "I dan II" },
+                    { letter: "B", text: "I dan IV" },
+                    { letter: "C", text: "II dan III" },
+                    { letter: "D", text: "III dan IV" }
+                ],
+                answer: "B"
+            },
+            {
+                id: 2,
+                question: "Yang manakah faktor penentu kejayaan Malaysia dalam Pertubuhan Bangsa-Bangsa Bersatu (PBB)?",
+                options: [
+                    { letter: "A", text: "PBB mengutamakan hak asasi manusia" },
+                    { letter: "B", text: "PBB menerima semua negara tanpa mengira ideologi" },
+                    { letter: "C", text: "PBB melaksanakan kerjasama multilateral dalam perdagangan bebas" },
+                    { letter: "D", text: "PBB mengambil sikap berkecuali dalam hal ehwal dalaman negara lain" }
+                ],
+                answer: "D"
+            },
+            {
+                id: 3,
+                question: "Yang manakah objektif dasar luar Malaysia?<br><br><span class='font-normal text-slate-600'>I. Menjamin kedaulatan negara<br>II. Menggalakkan kemasukan pelabur asing<br>III. Membantu penyelesaian masalah Negara lain<br>IV. Menjamin kestabilan politik peringkat global</span>",
+                options: [
+                    { letter: "A", text: "I dan II" },
+                    { letter: "B", text: "I dan III" },
+                    { letter: "C", text: "II dan IV" },
+                    { letter: "D", text: "III dan IV" }
+                ],
+                answer: "B"
+            },
+            {
+                id: 4,
+                question: "Tujuan Malaysia menyokong pelaksanaan Kawasan Perdagangan Bebas ASEAN adalah untuk<br><br><span class='font-normal text-slate-600'>I. menembusi pasaran global<br>II. meningkatkan daya saing negara<br>III. menguasai pasaran produk<br>IV. menghapuskan sekatan perdagangan negara anggota</span>",
+                options: [
+                    { letter: "A", text: "I dan II" },
+                    { letter: "B", text: "I dan III" },
+                    { letter: "C", text: "II dan IV" },
+                    { letter: "D", text: "III dan IV" }
+                ],
+                answer: "C"
+            },
+            {
+                id: 5,
+                question: "Yang manakah yang mencerminkan amalan untuk memperkukuhkan konsep Zon Aman, Bebas, dan Berkecuali?",
+                options: [
+                    { letter: "A", text: "Membentuk Piagam ASEAN" },
+                    { letter: "B", text: "Membentuk komuniti budaya ASEAN" },
+                    { letter: "C", text: "Membincangkan dalam Forum Serantau ASEAN" },
+                    { letter: "D", text: "Mendesak PBB campur tangan dalam kawasan konflik di Asia Tenggara" }
+                ],
+                answer: "C"
+            },
+            {
+                id: 6,
+                question: "Yang manakah matlamat penubuhan Zon Bebas Senjata Nuklear Asia Tenggara?",
+                options: [
+                    { letter: "A", text: "Mengelakkan penggunaan senjata nuklear di rantau ASEAN" },
+                    { letter: "B", text: "Mengelakkan percaturan politik kuasa besar di Asia Tenggara" },
+                    { letter: "C", text: "Mengelakkan penggunaan tenaga nuklear dalam kalangan negara anggota" },
+                    { letter: "D", text: "Mengelakkan perkembangan teknologi nuklear dalam kalangan negara anggota" }
+                ],
+                answer: "A"
+            },
+            {
+                id: 7,
+                question: "Yang manakah bukti Malaysia menyokong kerjasama dalam Kawasan Pertumbuhan Segi Tiga ASEAN?",
+                options: [
+                    { letter: "A", text: "Menyelesaikan masalah kemiskinan" },
+                    { letter: "B", text: "Membentuk kerjasama ketenteraan" },
+                    { letter: "C", text: "Menyediakan bantuan kewangan" },
+                    { letter: "D", text: "Membantu perkongsian inovasi" }
+                ],
+                answer: "A"
+            },
+            {
+                id: 8,
+                question: "Yang manakah sumbangan Malaysia dalam ASEAN?<br><br><span class='font-normal text-slate-600'>I. Mengetuai Majlis Perbankan Islam<br>II. Menjadi Pusat Pendidikan Serantau bagi Sains dan Matematik<br>III. Menyokong pelaksanaan Kawasan Perdagangan Bebas ASEAN<br>IV. Menubuhkan pakatan ketenteraan melalui Forum Serantau ASEAN</span>",
+                options: [
+                    { letter: "A", text: "I dan III" },
+                    { letter: "B", text: "I dan IV" },
+                    { letter: "C", text: "II dan III" },
+                    { letter: "D", text: "II dan IV" }
+                ],
+                answer: "C"
+            },
+            {
+                id: 9,
+                question: "Malaysia dapat memperkukuhkan jalinan kerjasama ekonomi dalam kalangan Negara-negara Selatan melalui penyertaan dalam",
+                options: [
+                    { letter: "A", text: "Pembentukan pasaran bersama" },
+                    { letter: "B", text: "Perjanjian pembentukan kawasan perdagangan bebas" },
+                    { letter: "C", text: "Program pertukaran data perdagangan, pelaburan dan teknologi" },
+                    { letter: "D", text: "Penyediaan memorandum persefahaman pembangunan wilayah bersama" }
+                ],
+                answer: "C"
+            },
+            {
+                id: 10,
+                question: "Apakah faedah yang diperoleh oleh Malaysia dengan menganggotai Kumpulan Lapan Negara Membangun?",
+                options: [
+                    { letter: "A", text: "Pemindahan teknologi industri automotif" },
+                    { letter: "B", text: "Penurunan kadar kemiskinan dan kadar buta huruf" },
+                    { letter: "C", text: "Peningkatan kemasukan pelaburan langsung asing" },
+                    { letter: "D", text: "Peluasan peluang baharu bagi kerjasama perdagangan" }
+                ],
+                answer: "D"
+            },
+            {
+                id: 11,
+                question: "Malaysia dan Indonesia menyelesaikan isu pembantu rumah melalui persetujuan<br><br><span class='font-normal text-slate-600'>I. Pendahuluan separuh gaji jika diminta<br>II. Gaji bulanan ditetapkan antara RM700 hingga RM900<br>III. Mendapat makanan seperti yang dimakan oleh majikan<br>IV. Dibenarkan untuk berjumpa saudara mara atau rakan pada masa cuti</span>",
+                options: [
+                    { letter: "A", text: "I dan II" },
+                    { letter: "B", text: "I dan III" },
+                    { letter: "C", text: "II dan IV" },
+                    { letter: "D", text: "III dan IV" }
+                ],
+                answer: "D"
+            },
+            {
+                id: 12,
+                question: "Cabaran yang dapat diselesaikan oleh Malaysia:",
+                options: [
+                    { letter: "A", text: "tuntutan ke atas Pulau Pisang" },
+                    { letter: "B", text: "tuntutan Filipina ke atas Sabah" },
+                    { letter: "C", text: "tuntutan ke atas Kepulauan Spratly" },
+                    { letter: "D", text: "tuntutan ke atas Pulau Sipadan dan Ligitan" }
+                ],
+                answer: "D"
+            },
+            {
+                id: 13,
+                question: "Cabaran yang dihadapi oleh sektor perindustrian Malaysia pada peringkat global ialah<br><br><span class='font-normal text-slate-600'>I. globalisasi<br>II. persaingan<br>III. Tenaga kerja<br>IV. Kualiti barangan</span>",
+                options: [
+                    { letter: "A", text: "I dan II" },
+                    { letter: "B", text: "I dan III" },
+                    { letter: "C", text: "II dan IV" },
+                    { letter: "D", text: "III dan IV" }
+                ],
+                answer: "C"
+            },
+            {
+                id: 14,
+                question: "Yang manakah isu yang berkaitan dengan peningkatan penggunaan teknologi maklumat di Malaysia?<br><br><span class='font-normal text-slate-600'>I. Krisis kewangan<br>II. Keruntuhan moral<br>III. Kekurangan pakar<br>IV. Keselamatan negara</span>",
+                options: [
+                    { letter: "A", text: "I dan II" },
+                    { letter: "B", text: "I dan III" },
+                    { letter: "C", text: "II dan IV" },
+                    { letter: "D", text: "III dan IV" }
+                ],
+                answer: "C"
+            },
+            {
+                id: 15,
+                question: "<div class='bg-amber-50 border-l-4 border-amber-400 p-3.5 rounded-r-xl mb-3 text-sm text-amber-900 font-normal'>\"Dalam usaha untuk menjadikan Malaysia sebagai hab makanan halal global, masalah utama yang dihadapi oleh pengeluar makanan dan produk halal tempatan ialah kekurangan daya saing berbanding dengan negara maju.\"</div>Kekurangan daya saing dalam memasarkan produk halal Malaysia adalah disebabkan oleh",
+                options: [
+                    { letter: "A", text: "Pasaran yang terhad" },
+                    { letter: "B", text: "Permintaan yang rendah" },
+                    { letter: "C", text: "Teknologi pemprosesan yang rendah" },
+                    { letter: "D", text: "Pembangunan jenama yang kurang berkesan" }
+                ],
+                answer: "C"
+            }
+        ];
+
+        // Senarai Kata Pujian (Betul)
+        const praiseMessages = [
+            "Tepat sekali! Syabas atas usaha anda! 🌟",
+            "Cemerlang! Jawapan anda sangat tepat! 👏",
+            "Bijak! Anda memang memahami topik ini! 🎉",
+            "Hebat! Teruskan kecemerlangan ini! 💪",
+            "Terbaik! Jawapan yang sangat tepat! 🔥"
+        ];
+
+        // Senarai Kata Semangat (Salah)
+        const encouragementMessages = [
+            "Kurang tepat. Jangan putus asa, cuba cari jawapan lain! 💪",
+            "Bukan jawapan itu. Baca semula soalan dan cuba lagi! 🔍",
+            "Belum betul lagi. Semak jawapan anda dan cuba sekali lagi! 🧐",
+            "Hampir tepat! Fikirkan semula dan pilih jawapan lain. ✨",
+            "Teruskan mencuba! Anda pasti boleh menemui jawapan yang betul! 🚀"
+        ];
+
+        // Senarai Motivasi Akhir
+        const motivationQuotes = [
+            "\"Kejayaan tidak datang daripada apa yang anda buat secara kebetulan, tetapi apa yang anda lakukan secara konsisten.\"",
+            "\"Usaha yang gigih hari ini adalah tangga kejayaan untuk hari esok. Tahniah kerana tidak mengaku kalah!\"",
+            "\"Kunci kejayaan adalah fokus kepada matlamat, bukan halangan. Teruskan belajar dan melangkah maju!\"",
+            "\"Pendidikan adalah senjata paling ampuh yang boleh anda gunakan untuk mengubah dunia.\""
+        ];
+
+        // Quiz State Variables
+        let questions = [];
+        let currentIndex = 0;
+        let firstAttemptScore = 0;
+        let hasAttemptedCurrentQuestion = false;
+        let isQuestionAnsweredCorrectly = false;
+
+        // Shuffle Array Function (Fisher-Yates)
+        function shuffleArray(array) {
+            let shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Start Quiz
+        function startQuiz() {
+            // Rawakkan soalan setiap kali kuiz bermula
+            questions = shuffleArray(originalQuestions);
+            currentIndex = 0;
+            firstAttemptScore = 0;
+            hasAttemptedCurrentQuestion = false;
+            isQuestionAnsweredCorrectly = false;
+
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('quiz-screen').classList.add('flex');
+
+            loadQuestion();
+        }
+
+        // Load Current Question
+        function loadQuestion() {
+            hasAttemptedCurrentQuestion = false;
+            isQuestionAnsweredCorrectly = false;
+
+            const currentQ = questions[currentIndex];
+            
+            // Update Trackers
+            document.getElementById('question-tracker').innerText = `Soalan ${currentIndex + 1} / ${questions.length}`;
+            document.getElementById('score-tracker').innerText = `Markah Percubaan Pertama: ${firstAttemptScore}`;
+            
+            // Progress Bar
+            const progressPercent = ((currentIndex) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+            // Question Text
+            document.getElementById('question-text').innerHTML = `${currentIndex + 1}. ${currentQ.question}`;
+
+            // Hide Feedback Box
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.className = 'hidden p-4 rounded-2xl mb-6 text-sm sm:text-base font-semibold flex items-center gap-3 animate-pop';
+
+            // Next Button State
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = true;
+            nextBtn.className = 'w-full sm:w-auto px-6 py-3.5 bg-slate-200 text-slate-400 font-bold rounded-xl shadow cursor-not-allowed transition-all flex items-center justify-center gap-2';
+
+            // Options Rendering
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            currentQ.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.id = `option-${opt.letter}`;
+                btn.onclick = () => checkAnswer(opt.letter);
+                btn.className = 'option-card w-full text-left p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-indigo-400 flex items-center gap-4 transition-all group';
+                
+                btn.innerHTML = `
+                    <div class="w-9 h-9 rounded-xl bg-slate-100 group-hover:bg-indigo-100 group-hover:text-indigo-700 text-slate-600 font-extrabold flex items-center justify-center transition-colors flex-shrink-0">
+                        ${opt.letter}
+                    </div>
+                    <div class="text-sm sm:text-base font-medium text-slate-700 flex-1">
+                        ${opt.text}
+                    </div>
+                    <div class="status-icon text-lg hidden"></div>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        // Check Answer Logic
+        function checkAnswer(selectedLetter) {
+            // Sekiranya soalan sudah dijawab dengan betul, abaikan klik seterusnya
+            if (isQuestionAnsweredCorrectly) return;
+
+            const currentQ = questions[currentIndex];
+            const isCorrect = (selectedLetter === currentQ.answer);
+            const selectedBtn = document.getElementById(`option-${selectedLetter}`);
+            const feedbackBox = document.getElementById('feedback-box');
+            const feedbackIcon = document.getElementById('feedback-icon');
+            const feedbackText = document.getElementById('feedback-text');
+            const nextBtn = document.getElementById('next-btn');
+
+            // Kira markah HANYA pada percubaan pertama bagi soalan ini
+            if (!hasAttemptedCurrentQuestion) {
+                if (isCorrect) {
+                    firstAttemptScore++;
+                    document.getElementById('score-tracker').innerText = `Markah Percubaan Pertama: ${firstAttemptScore}`;
+                }
+                hasAttemptedCurrentQuestion = true;
+            }
+
+            if (isCorrect) {
+                // JAWAPAN BETUL
+                isQuestionAnsweredCorrectly = true;
+
+                // Tanda gaya pilihan betul
+                selectedBtn.className = 'option-card w-full text-left p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50 text-emerald-950 flex items-center gap-4 transition-all shadow-md';
+                const statusIcon = selectedBtn.querySelector('.status-icon');
+                statusIcon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600"></i>';
+                statusIcon.classList.remove('hidden');
+
+                // Kunci pilihan soalan
+                const allButtons = document.querySelectorAll('.option-card');
+                allButtons.forEach(btn => {
+                    btn.classList.add('disabled');
+                    btn.onclick = null;
+                });
+
+                // Papar Mesej Pujian
+                const randomPraise = praiseMessages[Math.floor(Math.random() * praiseMessages.length)];
+                feedbackBox.className = 'p-4 rounded-2xl mb-6 text-sm sm:text-base font-semibold flex items-center gap-3 animate-pop bg-emerald-100 text-emerald-900 border border-emerald-200';
+                feedbackIcon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600 text-2xl"></i>';
+                feedbackText.innerText = randomPraise;
+                feedbackBox.classList.remove('hidden');
+
+                // Benarkan ke soalan seterusnya
+                nextBtn.disabled = false;
+                nextBtn.className = 'w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/25 transform active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer';
+
+            } else {
+                // JAWAPAN SALAH
+                // Berikan gaya salah pada butang yang dipilih & kunci butang ini sahaja
+                selectedBtn.className = 'option-card w-full text-left p-4 rounded-2xl border-2 border-rose-300 bg-rose-50/70 text-slate-700 flex items-center gap-4 transition-all opacity-70 animate-shake';
+                const statusIcon = selectedBtn.querySelector('.status-icon');
+                statusIcon.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-500"></i>';
+                statusIcon.classList.remove('hidden');
+                selectedBtn.onclick = null; // Nyahaktifkan pilihan salah yang telah ditekan
+
+                // Papar Mesej Semangat (Tanpa Menunjukkan Jawapan Betul!)
+                const randomEncouragement = encouragementMessages[Math.floor(Math.random() * encouragementMessages.length)];
+                feedbackBox.className = 'p-4 rounded-2xl mb-6 text-sm sm:text-base font-semibold flex items-center gap-3 animate-pop bg-rose-100 text-rose-900 border border-rose-200';
+                feedbackIcon.innerHTML = '<i class="fa-solid fa-lightbulb text-rose-600 text-2xl"></i>';
+                feedbackText.innerText = randomEncouragement;
+                feedbackBox.classList.remove('hidden');
+            }
+        }
+
+        // Next Question
+        function nextQuestion() {
+            if (!isQuestionAnsweredCorrectly) return;
+
+            currentIndex++;
+            if (currentIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Show Final Results
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('result-screen').classList.add('flex');
+
+            const totalQuestions = questions.length;
+            const percentage = Math.round((firstAttemptScore / totalQuestions) * 100);
+
+            document.getElementById('final-score').innerText = firstAttemptScore;
+            document.getElementById('final-total').innerText = `/ ${totalQuestions}`;
+            document.getElementById('percentage-text').innerText = `Peratusan Percubaan Pertama: ${percentage}%`;
+
+            const badge = document.getElementById('result-badge');
+            if (percentage >= 80) {
+                badge.className = 'w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl shadow-xl bg-gradient-to-tr from-amber-400 to-yellow-300 text-white';
+                badge.innerHTML = '<i class="fa-solid fa-trophy"></i>';
+                // Trigger Confetti
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            } else if (percentage >= 50) {
+                badge.className = 'w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl shadow-xl bg-gradient-to-tr from-indigo-500 to-violet-500 text-white';
+                badge.innerHTML = '<i class="fa-solid fa-award"></i>';
+            } else {
+                badge.className = 'w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl shadow-xl bg-gradient-to-tr from-sky-400 to-blue-500 text-white';
+                badge.innerHTML = '<i class="fa-solid fa-thumbs-up"></i>';
+            }
+
+            // Set Random Motivational Quote
+            const randomQuote = motivationQuotes[Math.floor(Math.random() * motivationQuotes.length)];
+            document.getElementById('motivation-quote').innerText = randomQuote;
+        }
+
+        // Restart Quiz
+        function restartQuiz() {
+            startQuiz();
+        }
+    </script>
+</body>
+</html>
